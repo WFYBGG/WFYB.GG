@@ -1,0 +1,422 @@
+-- WFYB.GG sUNC Compatible (V3)
+
+local a=game:GetService"Players"
+local b=a.LocalPlayer
+local c=game:GetService"Workspace"
+local d=game:GetService"RunService"
+local e=game:GetService"StarterGui"
+local f=game:GetService"CoreGui"
+
+
+local g=gethui and gethui()or f
+pcall(function()
+local h=g:FindFirstChild"WFYB_Hub"
+if h then h:Destroy()end
+end)
+
+
+local h=Instance.new"ScreenGui"
+h.Name="WFYB_Hub"
+h.ResetOnSpawn=false
+h.Parent=g
+
+e:SetCore("SendNotification",{
+Title="Teleport Script Loaded",
+Text="Press buttons to toggle features"
+})
+
+
+local i=Instance.new"Frame"
+i.Size=UDim2.new(0,350,0,440)
+i.Position=UDim2.new(0.5,-175,0.5,-220)
+i.BackgroundColor3=Color3.fromRGB(20,20,20)
+i.BorderColor3=Color3.fromRGB(170,0,255)
+i.BorderSizePixel=2
+i.Parent=h
+i.Active=true
+i.Draggable=true
+
+
+local j=Instance.new"TextLabel"
+j.Size=UDim2.new(1,0,0,30)
+j.BackgroundColor3=Color3.fromRGB(30,30,30)
+j.BorderColor3=Color3.fromRGB(170,0,255)
+j.BorderSizePixel=1
+j.Text="    WFYB.GG [V3]"
+j.Font=Enum.Font.SourceSansBold
+j.TextSize=18
+j.TextColor3=Color3.fromRGB(255,255,255)
+j.TextXAlignment=Enum.TextXAlignment.Left
+j.Parent=i
+
+
+local k={"Combat","Misc"}
+for l,m in ipairs(k)do
+local n=Instance.new"TextLabel"
+n.Size=UDim2.new(0,60,0,20)
+n.Position=UDim2.new(0,10+(l-1)*70,0,35)
+n.BackgroundColor3=Color3.fromRGB(40,40,40)
+n.BorderColor3=Color3.fromRGB(170,0,255)
+n.BorderSizePixel=1
+n.Text=m
+n.Font=Enum.Font.SourceSansBold
+n.TextSize=14
+n.TextColor3=Color3.fromRGB(255,255,255)
+n.Parent=i
+end
+
+local function createSectionLabel(l,m)
+local n=Instance.new"TextLabel"
+n.Size=UDim2.new(1,-20,0,20)
+n.Position=UDim2.new(0,10,0,m)
+n.BackgroundColor3=Color3.fromRGB(30,30,30)
+n.BorderColor3=Color3.fromRGB(170,0,255)
+n.BorderSizePixel=1
+n.Font=Enum.Font.SourceSansBold
+n.Text=l
+n.TextColor3=Color3.fromRGB(255,255,255)
+n.TextSize=14
+n.TextXAlignment=Enum.TextXAlignment.Left
+n.Parent=i
+end
+
+local function createButton(l,m)
+local n=Instance.new"TextButton"
+n.Size=UDim2.new(1,-20,0,30)
+n.Position=UDim2.new(0,10,0,m)
+n.BackgroundColor3=Color3.fromRGB(50,50,50)
+n.BorderColor3=Color3.fromRGB(170,0,255)
+n.BorderSizePixel=1
+n.TextColor3=Color3.fromRGB(255,255,255)
+n.TextSize=14
+n.Font=Enum.Font.SourceSans
+n.Text=l
+n.Parent=i
+return n
+end
+
+
+createSectionLabel(" Automation:",60)
+local l=createButton("Start Auto Fling",85)
+local m=createButton("Enable Kill Aura",120)
+local n=createButton("Unload Script",155)
+
+createSectionLabel(" Teleportation Status:",190)
+local o=Instance.new"TextLabel"
+o.Size=UDim2.new(1,-20,0,25)
+o.Position=UDim2.new(0,10,0,215)
+o.BackgroundColor3=Color3.fromRGB(20,20,20)
+o.BorderSizePixel=0
+o.TextColor3=Color3.fromRGB(255,0,0)
+o.Font=Enum.Font.SourceSansBold
+o.TextSize=14
+o.Text="Status: Idle"
+o.Parent=i
+
+local p=Instance.new"TextLabel"
+p.Size=UDim2.new(1,-20,0,20)
+p.Position=UDim2.new(0,10,0,245)
+p.BackgroundTransparency=1
+p.TextColor3=Color3.fromRGB(255,255,255)
+p.Font=Enum.Font.SourceSans
+p.TextSize=14
+p.Text="Target: None"
+p.Parent=i
+
+
+local q
+
+local r=createButton("Select Player",270)
+local s=Instance.new"ScrollingFrame"
+s.Size=UDim2.new(1,-20,0,100)
+s.Position=UDim2.new(0,10,0,305)
+s.BackgroundColor3=Color3.fromRGB(30,30,30)
+s.BorderColor3=Color3.fromRGB(170,0,255)
+s.ScrollBarThickness=6
+s.Visible=false
+s.CanvasSize=UDim2.new(0,0,0,0)
+s.Parent=i
+
+local function updateDropdown()
+s:ClearAllChildren()
+local t=0
+
+
+local u=Instance.new"TextButton"
+u.Size=UDim2.new(1,0,0,20)
+u.Position=UDim2.new(0,0,0,t)
+u.BackgroundColor3=Color3.fromRGB(60,0,0)
+u.Text="Clear Target"
+u.TextColor3=Color3.new(1,1,1)
+u.Font=Enum.Font.SourceSansBold
+u.TextSize=14
+u.Parent=s
+u.MouseButton1Click:Connect(function()
+q=nil
+r.Text="Select Player"
+s.Visible=false
+end)
+t=t+22
+
+for v,w in ipairs(a:GetPlayers())do
+if w~=b then
+local x=Instance.new"TextButton"
+x.Size=UDim2.new(1,0,0,20)
+x.Position=UDim2.new(0,0,0,t)
+x.BackgroundColor3=Color3.fromRGB(50,50,50)
+x.Text=w.Name
+x.TextColor3=Color3.new(1,1,1)
+x.Font=Enum.Font.SourceSans
+x.TextSize=14
+x.Parent=s
+
+x.MouseButton1Click:Connect(function()
+q=w
+r.Text="Target: "..w.Name
+s.Visible=false
+end)
+
+t=t+22
+end
+end
+s.CanvasSize=UDim2.new(0,0,0,t)
+end
+
+r.MouseButton1Click:Connect(function()
+updateDropdown()
+s.Visible=not s.Visible
+end)
+
+
+local t=Instance.new"TextLabel"
+t.Parent=h
+t.Size=UDim2.new(0,350,0,20)
+t.Position=UDim2.new(0,10,0,10)
+t.BackgroundTransparency=1
+t.TextColor3=Color3.fromRGB(200,150,255)
+t.Font=Enum.Font.SourceSansBold
+t.TextSize=14
+t.Text="Distances: Loading..."
+
+
+local u=10
+local v,w={}
+local function clearHighlight()if w then w:Destroy()end w=nil end
+local function highlightTarget(x)
+clearHighlight()
+if x and x:IsA"BasePart"then
+local y=Instance.new"SelectionBox"
+y.Adornee=x
+y.Color3=Color3.new(1,0,0)
+y.LineThickness=0.05
+y.Parent=h
+w=y
+end
+end
+local function canTeleportTo(x)
+local y=tick()
+if not v[x]or(y-v[x])>=u then
+v[x]=y
+return true
+end
+return false
+end
+local function getPriorityBoatPart(x)
+local y,z,A
+for B,C in ipairs(x:GetDescendants())do
+if C:IsA"BasePart"then
+local D=C.Name:lower()
+if not y and D:find"seat"then
+y=C
+elseif not z and D:find"spawn"then
+z=C
+elseif not A then
+A=C
+end
+end
+end
+return y or z or A or x.PrimaryPart or x:FindFirstChildWhichIsA"BasePart"
+end
+
+local x,y,z=false,false,false
+local A=1
+
+spawn(function()
+while true do
+local B=b.Character and b.Character:FindFirstChild"HumanoidRootPart"
+if B and B.Position.Y<-25 then
+B.CFrame=CFrame.new(0,10000,0)
+end
+
+if x then
+if not B then task.wait(0.1)continue end
+
+local function tryValidTarget(C)
+for D=1,#C do
+if A>#C then A=1 end
+local E=C[A]
+A+=1
+
+local F,G=E.part,(E.part.Position-Vector3.zero).Magnitude
+t.Text="Cycle: "..E.type..": "..E.name.." @ "..math.floor(G)
+if F.Position.Y>-100 and G<1e6 and(G<50000 or canTeleportTo(E.name))then
+B.CFrame=F.CFrame
+highlightTarget(F)
+o.Text="Status: Teleported"
+o.TextColor3=Color3.fromRGB(0,255,0)
+p.Text="Target: "..E.type..": "..E.name
+task.wait(0.3)
+B.CFrame=CFrame.new(0,10,0)
+return true
+else
+clearHighlight()
+o.Text="Status: Skipped Target"
+o.TextColor3=Color3.fromRGB(0,128,255)
+p.Text="Target: "..E.name
+end
+end
+return false
+end
+
+local C,D={},{}
+for E,F in ipairs(c:GetDescendants())do
+if F:IsA"Model"and F.Name:lower():find"boat"then
+local G=F:FindFirstChild"BoatData"
+local H=G and G:FindFirstChild"Owner"
+
+if H and H:IsA"ObjectValue"then
+if H.Value==b then
+continue
+end
+if q and H.Value~=q then
+continue
+end
+elseif q then
+continue
+end
+
+local I=getPriorityBoatPart(F)
+if I then table.insert(C,{part=I,name=F.Name,type="Boat"})end
+end
+end
+
+for E,F in ipairs(a:GetPlayers())do
+if F~=b then
+if q and F~=q then continue end
+
+local G=F.Character and F.Character:FindFirstChild"HumanoidRootPart"
+if G then table.insert(D,{part=G,name=F.Name,type="Player"})end
+end
+end
+
+local E=tryValidTarget(C)or tryValidTarget(D)
+
+if not E then
+clearHighlight()
+t.Text="No Targets"
+o.Text="Status: Standby"
+o.TextColor3=Color3.fromRGB(255,255,0)
+p.Text="Target: None"
+if B then B.CFrame=CFrame.new(0,10000,0)end
+end
+else
+o.Text="Status: Idle"
+o.TextColor3=Color3.fromRGB(255,0,0)
+end
+
+if b.Character and b.Character:FindFirstChild"Humanoid"then
+if b.Character.Humanoid.Health<=0 then
+o.Text="Status: Dead . . . Respawning"
+o.TextColor3=Color3.fromRGB(255,255,0)
+end
+end
+
+task.wait(0.1)
+end
+end)
+
+
+local function startKillAura()
+spawn(function()
+while z do
+local B
+
+
+if b:FindFirstChild"Backpack"then
+B=b.Backpack:FindFirstChild"Sword"
+end
+if not B and b.Character then
+B=b.Character:FindFirstChild"Sword"
+end
+
+if B then
+local C=b.Character and b.Character:FindFirstChild"Humanoid"
+if C then C:EquipTool(B)end
+
+local D=B:FindFirstChild"Handle"
+if D then
+
+D.Size=Vector3.new(200,200,1000)
+D.Massless=true
+D.Anchored=false
+D.CanCollide=false
+D.Transparency=0.5
+D.BrickColor=BrickColor.new"Bright red"
+end
+
+while z and B and B.Parent==b.Character do
+pcall(function()B:Activate()end)
+task.wait(0.5)
+end
+end
+
+task.wait(1)
+end
+end)
+end
+
+
+l.MouseButton1Click:Connect(function()
+x=not x
+y=x
+l.Text=x and"Stop Fling"or"Start Fling"
+
+if y then
+spawn(function()
+local B=0.1
+while y do
+d.Heartbeat:Wait()
+local C=b.Character
+local D=C and C:FindFirstChild"HumanoidRootPart"
+if D then
+local E=D.Velocity
+D.Velocity=E*100000+Vector3.new(0,100000,0)
+d.RenderStepped:Wait()
+D.Velocity=E
+d.Stepped:Wait()
+D.Velocity=E+Vector3.new(0,B,0)
+B=-B
+end
+end
+end)
+end
+end)
+
+m.MouseButton1Click:Connect(function()
+z=not z
+m.Text=z and"Disable Kill Aura"or"Enable Kill Aura"
+if z then
+startKillAura()
+b.CharacterAdded:Connect(function()
+if z then task.wait(1)startKillAura()end
+end)
+end
+end)
+
+n.MouseButton1Click:Connect(function()
+x=false
+y=false
+z=false
+clearHighlight()
+h:Destroy()
+end)
