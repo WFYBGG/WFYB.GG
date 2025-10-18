@@ -28,35 +28,39 @@ local LocalPlayer = PlayersService.LocalPlayer
 local VipCommandsModule = {}
 
 local function RunVipCmd(cmdString)
-    pcall(function()
-        local Channels = TextChatServiceService:FindFirstChild("TextChannels")
-        local TargetChannel = Channels and (Channels:FindFirstChild("RBXGeneral") or Channels:FindFirstChild("General"))
-        if TargetChannel and TargetChannel.SendAsync then
-            TargetChannel:SendAsync(cmdString)
-            return
-        end
-        local ChatEvents = ReplicatedStorageService:FindFirstChild("DefaultChatSystemChatEvents")
-        if ChatEvents and ChatEvents:FindFirstChild("SayMessageRequest") then
-            ChatEvents.SayMessageRequest:FireServer(cmdString, "All")
-            return
-        end
-    end)
+    local ChatEvents = ReplicatedStorageService:FindFirstChild("DefaultChatSystemChatEvents")
+    if ChatEvents and ChatEvents:FindFirstChild("SayMessageRequest") then
+        ChatEvents.SayMessageRequest:FireServer(cmdString, "All")
+        return
+    end
+
+    local Channels = TextChatServiceService:FindFirstChild("TextChannels")
+    local TargetChannel = Channels and (Channels:FindFirstChild("RBXGeneral") or Channels:FindFirstChild("General"))
+    if TargetChannel and TargetChannel.SendAsync then
+        TargetChannel:SendAsync(cmdString)
+    end
 end
 
+LocalPlayer.Chatted:Connect(function(Message)
+    if Message:sub(1, 1) == "/" and (
+        Message:match("^/vip") or
+        Message:match("^/kick") or Message:match("^/vban") or Message:match("^/unban") or
+        Message == "/unbanall" or Message == "/bans"
+    ) then
+        RunVipCmd(Message)
+    end
+end)
+
 function VipCommandsModule.Freecam()
-    pcall(function()
-        if LocalPlayer and LocalPlayer.Name then
-            RunVipCmd("/vipfreecam " .. LocalPlayer.Name)
-        end
-    end)
+    if LocalPlayer and LocalPlayer.Name then
+        RunVipCmd("/vipfreecam " .. LocalPlayer.Name)
+    end
 end
 
 function VipCommandsModule.StopFreecam()
-    pcall(function()
-        if LocalPlayer and LocalPlayer.Name then
-            RunVipCmd("/vipstopfreecam " .. LocalPlayer.Name)
-        end
-    end)
+    if LocalPlayer and LocalPlayer.Name then
+        RunVipCmd("/vipstopfreecam " .. LocalPlayer.Name)
+    end
 end
 
 function VipCommandsModule.NextMode()
@@ -67,16 +71,16 @@ function VipCommandsModule.Help()
     RunVipCmd("/vipcommands")
 end
 
-function VipCommandsModule.Kick(playerName)
-    RunVipCmd("/kick " .. (playerName or ""))
+function VipCommandsModule.Kick(PlayerName)
+    RunVipCmd("/kick " .. (PlayerName or ""))
 end
 
-function VipCommandsModule.VBan(playerName)
-    RunVipCmd("/vban " .. (playerName or ""))
+function VipCommandsModule.VBan(PlayerName)
+    RunVipCmd("/vban " .. (PlayerName or ""))
 end
 
-function VipCommandsModule.Unban(playerName)
-    RunVipCmd("/unban " .. (playerName or ""))
+function VipCommandsModule.Unban(PlayerName)
+    RunVipCmd("/unban " .. (PlayerName or ""))
 end
 
 function VipCommandsModule.UnbanAll()
@@ -87,5 +91,4 @@ function VipCommandsModule.Bans()
     RunVipCmd("/bans")
 end
 
--- [USE THE GLOBAL VARIABLE BELOW IF YOU WANT A CUSTOM UI TO CALL THIS MODULE]
 _G.VIPCommands = VipCommandsModule
